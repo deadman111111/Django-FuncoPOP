@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Корзины пользователей{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Корзины пользователей</h1>
+
+<div class="cards">
+    {% for user in users_with_cart %}
+        <div class="card">
+            <h2 class="card-title">{{ user.username }}</h2>
+            <p class="card-text"><strong>Email:</strong> {{ user.email|default:"Не указан" }}</p>
+            <p class="card-text"><strong>Роль:</strong> {{ user.get_role_display }}</p>
+
+            <a href="{% url 'admin_user_cart' user.pk %}" class="btn">
+                Открыть корзину
+            </a>
+        </div>
+    {% empty %}
+        <p class="page-text">У пользователей пока нет товаров в корзинах.</p>
+    {% endfor %}
+</div>
+{% endblock %}

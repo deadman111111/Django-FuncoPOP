@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление фигурки{% endblock %}
+
+{% block content %}
+<div class="detail-card">
+    <h1 class="page-title">Удаление фигурки</h1>
+    <p class="page-text">
+        Вы уверены, что хотите удалить фигурку <strong>{{ figure.title }}</strong>?
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn">Удалить</button>
+        <a href="{% url 'figure_detail' figure.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

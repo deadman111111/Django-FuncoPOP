@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Все отзывы{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Все отзывы</h1>
+
+<div class="reviews-section">
+    {% for review in reviews %}
+        <div class="review-card">
+            <p><strong>Пользователь:</strong> {{ review.user.username }}</p>
+
+            <p>
+                <strong>Фигурка:</strong>
+                <a href="{% url 'figure_detail' review.figure.pk %}">
+                    {{ review.figure.title }}
+                </a>
+            </p>
+
+            <p><strong>Персонаж:</strong> {{ review.figure.character_name }}</p>
+            <p><strong>Франшиза:</strong> {{ review.figure.franchise }}</p>
+            <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+            <p><strong>Комментарий:</strong> {{ review.comment }}</p>
+            <p><strong>Дата:</strong> {{ review.created_at }}</p>
+        </div>
+    {% empty %}
+        <p class="page-text">Отзывов пока нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

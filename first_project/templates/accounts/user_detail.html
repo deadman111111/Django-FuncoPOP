@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Профиль пользователя</h1>
+
+<div class="detail-card">
+    <p><strong>Имя пользователя:</strong> {{ user_obj.username }}</p>
+    <p><strong>Имя:</strong> {{ user_obj.first_name|default:"Не указано" }}</p>
+    <p><strong>Фамилия:</strong> {{ user_obj.last_name|default:"Не указана" }}</p>
+    <p><strong>Email:</strong> {{ user_obj.email|default:"Не указан" }}</p>
+    <p><strong>Телефон:</strong> {{ user_obj.phone|default:"Не указан" }}</p>
+    <p><strong>Роль:</strong> {{ user_obj.get_role_display }}</p>
+</div>
+
+<a href="{% url 'user_list' %}" class="btn btn-secondary">Назад</a>
+{% endblock %}

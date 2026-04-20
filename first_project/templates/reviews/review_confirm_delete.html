@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление отзыва{% endblock %}
+
+{% block content %}
+<div class="detail-card">
+    <h1 class="page-title">Подтверждение удаления</h1>
+
+    <p class="page-text">
+        Вы уверены, что хотите удалить этот отзыв?
+    </p>
+
+    <div class="review-card">
+        <p><strong>Фигурка:</strong> {{ review.figure.title }}</p>
+        <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+        <p><strong>Комментарий:</strong> {{ review.comment }}</p>
+        <p><strong>Дата:</strong> {{ review.created_at }}</p>
+    </div>
+
+    <form method="post" class="action-buttons">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Да, удалить</button>
+        <a href="{% url 'figure_detail' review.figure.pk %}" class="btn btn-secondary">Отмена</a>
+    </form>
+</div>
+{% endblock %}

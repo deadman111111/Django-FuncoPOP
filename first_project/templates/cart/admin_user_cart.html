@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Корзина пользователя{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Корзина пользователя {{ user_obj.username }}</h1>
+
+{% if cart_items %}
+    <div class="cart-list">
+        {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    {% if item.figure.image %}
+                        <img src="{{ item.figure.image.url }}" alt="{{ item.figure.title }}" class="cart-image">
+                    {% else %}
+                        <div class="cart-no-image">Нет фото</div>
+                    {% endif %}
+
+                    <div>
+                        <h2 class="card-title">{{ item.figure.title }}</h2>
+                        <p class="card-text"><strong>Цена:</strong> {{ item.figure.price }} ₽</p>
+                        <p class="card-text"><strong>Количество:</strong> {{ item.quantity }}</p>
+                    </div>
+                </div>
+
+                <div class="cart-actions">
+                    <a href="{% url 'admin_increase_quantity' item.pk %}" class="btn">+</a>
+                    <a href="{% url 'admin_decrease_quantity' item.pk %}" class="btn btn-secondary">-</a>
+                    <a href="{% url 'admin_remove_from_cart' item.pk %}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="cart-total">
+        <h2>Общая сумма: {{ total_price }} ₽</h2>
+    </div>
+{% else %}
+    <p class="page-text">Корзина этого пользователя пуста.</p>
+{% endif %}
+
+<div class="action-buttons">
+    <a href="{% url 'admin_cart_list' %}" class="btn btn-secondary">Назад к корзинам</a>
+</div>
+{% endblock %}

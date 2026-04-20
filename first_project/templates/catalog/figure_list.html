@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Фигурки{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Каталог фигурок</h1>
+
+    {% if request.user.is_authenticated and request.user.role == 'admin' %}
+        <a href="{% url 'figure_create' %}" class="btn add-button">Добавить фигурку</a>
+    {% endif %}
+</div>
+
+<div class="cards">
+    {% for figure in figures %}
+        <div class="card">
+            {% if figure.image %}
+                <img src="{{ figure.image.url }}" alt="{{ figure.title }}" class="card-image">
+            {% else %}
+                <div class="no-image">Нет фото</div>
+            {% endif %}
+
+            <h2 class="card-title">{{ figure.title }}</h2>
+
+            <p class="card-text"><strong>Персонаж:</strong> {{ figure.character_name }}</p>
+            <p class="card-text"><strong>Франшиза:</strong> {{ figure.franchise }}</p>
+            <p class="card-text"><strong>Цена:</strong> {{ figure.price }} ₽</p>
+
+            <a href="{% url 'figure_detail' figure.pk %}" class="btn">Подробнее</a>
+        </div>
+    {% empty %}
+        <p>Пока фигурок нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}

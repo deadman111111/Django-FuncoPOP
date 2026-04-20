@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Корзина{% endblock %}
+
+{% block content %}
+<h1 class="page-title">Моя корзина</h1>
+
+{% if cart_items %}
+    <div class="cart-list">
+        {% for item in cart_items %}
+            <div class="cart-item">
+                <div class="cart-item-info">
+                    {% if item.figure.image %}
+                        <img src="{{ item.figure.image.url }}" alt="{{ item.figure.title }}" class="cart-image">
+                    {% else %}
+                        <div class="cart-no-image">Нет фото</div>
+                    {% endif %}
+
+                    <div>
+                        <h2 class="card-title">{{ item.figure.title }}</h2>
+                        <p class="card-text"><strong>Цена:</strong> {{ item.figure.price }} ₽</p>
+                        <p class="card-text"><strong>Количество:</strong> {{ item.quantity }}</p>
+                        <p class="card-text">
+                            <strong>Сумма:</strong> {{ item.figure.price|floatformat:2 }} ₽ × {{ item.quantity }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="cart-actions">
+                    <a href="{% url 'increase_quantity' item.pk %}" class="btn">+</a>
+                    <a href="{% url 'decrease_quantity' item.pk %}" class="btn btn-secondary">-</a>
+                    <a href="{% url 'remove_from_cart' item.pk %}" class="btn btn-danger">Удалить</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="cart-total">
+        <h2>Общая сумма: {{ total_price }} ₽</h2>
+    </div>
+{% else %}
+    <p class="page-text">Корзина пока пуста.</p>
+{% endif %}
+{% endblock %}

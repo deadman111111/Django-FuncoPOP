@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ figure.title }}{% endblock %}
+
+{% block content %}
+<div class="detail-card">
+    {% if figure.image %}
+        <img src="{{ figure.image.url }}" alt="{{ figure.title }}" class="detail-image">
+    {% else %}
+        <div class="no-image detail-no-image">Нет фото</div>
+    {% endif %}
+
+    <h1 class="page-title">{{ figure.title }}</h1>
+
+    <p><strong>Персонаж:</strong> {{ figure.character_name }}</p>
+    <p><strong>Франшиза:</strong> {{ figure.franchise }}</p>
+    <p><strong>Серия:</strong> {{ figure.series|default:"Не указана" }}</p>
+    <p><strong>Цена:</strong> {{ figure.price }} ₽</p>
+    <p><strong>Количество:</strong> {{ figure.stock }}</p>
+    <p><strong>Дата выпуска:</strong> {{ figure.release_date|default:"Не указана" }}</p>
+    <p><strong>Описание:</strong> {{ figure.description|default:"Нет описания" }}</p>
+
+    <p>
+        <strong>Статус:</strong>
+        {% if figure.is_available %}
+            В наличии
+        {% else %}
+            Нет в наличии
+        {% endif %}
+    </p>
+
+    <div class="action-buttons">
+        <a href="{% url 'figure_list' %}" class="btn btn-secondary">Назад</a>
+
+        {% if request.user.is_authenticated and request.user.role == 'admin' %}
+            <a href="{% url 'figure_update' figure.pk %}" class="btn">Редактировать</a>
+            <a href="{% url 'figure_delete' figure.pk %}" class="btn btn-danger">Удалить</a>
+        {% endif %}
+
+        {% if request.user.is_authenticated and request.user.role == 'user' %}
+            <a href="{% url 'add_to_cart' figure.pk %}" class="btn">Добавить в корзину</a>
+            <a href="{% url 'review_create' figure.pk %}" class="btn">Оставить отзыв</a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="reviews-section">
+    <h2 class="section-title">Отзывы</h2>
+
+    {% for review in figure.reviews.all %}
+        <div class="review-card">
+            <p><strong>Пользователь:</strong> {{ review.user.username }}</p>
+            <p><strong>Оценка:</strong> {{ review.rating }}/5</p>
+            <p><strong>Комментарий:</strong> {{ review.comment }}</p>
+            <p><strong>Дата:</strong> {{ review.created_at }}</p>
+
+            {% if request.user == review.user %}
+                <div class="action-buttons">
+                    <a href="{% url 'review_update' review.pk %}" class="btn">Редактировать</a>
+                    <a href="{% url 'review_delete' review.pk %}" class="btn btn-danger">Удалить</a>
+                </div>
+            {% endif %}
+        </div>
+    {% empty %}
+        <p class="page-text">Пока отзывов нет.</p>
+    {% endfor %}
+</div>
+{% endblock %}
