@@ -1,0 +1,247 @@
+северо-западный:
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+if (!File.Exists("input.txt")) { File.WriteAllText("output.txt", "Файл input.txt не найден"); return; }
+
+string[] lines = File.ReadAllLines("input.txt");
+int[] size = lines[0].Split().Select(int.Parse).ToArray();
+int m = size[0], n = size[1];
+int[] a = lines[1].Split().Select(int.Parse).ToArray();
+int[] b = lines[2].Split().Select(int.Parse).ToArray();
+int[,] c = new int[m, n], x = new int[m, n];
+
+for (int i = 0; i < m; i++)
+{
+    int[] row = lines[i + 3].Split().Select(int.Parse).ToArray();
+    for (int j = 0; j < n; j++) c[i, j] = row[j];
+}
+
+if (a.Sum() != b.Sum()) { File.WriteAllText("output.txt", "Задача не закрытая"); return; }
+
+for (int i = 0, j = 0; i < m && j < n;)
+{
+    int value = Math.Min(a[i], b[j]);
+    x[i, j] = value;
+    a[i] -= value;
+    b[j] -= value;
+    if (a[i] == 0) i++;
+    if (b[j] == 0) j++;
+}
+
+int sum = 0;
+StringBuilder result = new StringBuilder("Опорный план:\n");
+
+for (int i = 0; i < m; i++)
+{
+    for (int j = 0; j < n; j++)
+    {
+        result.Append(x[i, j] + "\t");
+        sum += x[i, j] * c[i, j];
+    }
+    result.AppendLine();
+}
+
+result.AppendLine("Стоимость: " + sum);
+File.WriteAllText("output.txt", result.ToString());
+
+
+
+
+
+минимального:
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+if (!File.Exists("input.txt")) { File.WriteAllText("output.txt", "Файл input.txt не найден"); return; }
+
+string[] lines = File.ReadAllLines("input.txt");
+int[] size = lines[0].Split().Select(int.Parse).ToArray();
+int m = size[0];
+int n = size[1];
+int[] a = lines[1].Split().Select(int.Parse).ToArray();
+int[] b = lines[2].Split().Select(int.Parse).ToArray();
+int[,] c = new int[m, n];
+int[,] x = new int[m, n];
+
+for (int i = 0; i < m; i++)
+{
+    int[] row = lines[i + 3].Split().Select(int.Parse).ToArray();
+    for (int j = 0; j < n; j++) c[i, j] = row[j];
+}
+
+if (a.Sum() != b.Sum()) { File.WriteAllText("output.txt", "Задача не закрытая"); return; }
+
+while (a.Sum() > 0)
+{
+    int best = int.MaxValue;
+    int r = -1;
+    int col = -1;
+
+    for (int i = 0; i < m; i++)
+        for (int j = 0; j < n; j++)
+            if (a[i] > 0 && b[j] > 0 && c[i, j] < best)
+            {
+                best = c[i, j];
+                r = i;
+                col = j;
+            }
+
+    int value = Math.Min(a[r], b[col]);
+    x[r, col] = value;
+    a[r] = a[r] - value;
+    b[col] = b[col] - value;
+}
+
+int sum = 0;
+StringBuilder result = new StringBuilder();
+result.AppendLine("Опорный план:");
+
+for (int i = 0; i < m; i++)
+{
+    for (int j = 0; j < n; j++) { result.Append(x[i, j] + "\t"); sum += x[i, j] * c[i, j]; }
+    result.AppendLine();
+}
+
+result.AppendLine("Стоимость: " + sum);
+File.WriteAllText("output.txt", result.ToString());
+
+
+
+
+
+
+дейстры:
+using System;
+using System.IO;
+using System.Linq;
+
+if (!File.Exists("input.txt")) { File.WriteAllText("output.txt", "Файл input.txt не найден"); return; }
+
+string[] lines = File.ReadAllLines("input.txt");
+int[] first = lines[0].Split().Select(int.Parse).ToArray();
+int n = first[0], start = first[1] - 1, finish = first[2] - 1;
+int[,] g = new int[n, n];
+
+for (int i = 0; i < n; i++)
+{
+    int[] row = lines[i + 1].Split().Select(int.Parse).ToArray();
+    for (int j = 0; j < n; j++) g[i, j] = row[j];
+}
+
+int INF = 1000000;
+int[] dist = Enumerable.Repeat(INF, n).ToArray();
+int[] prev = Enumerable.Repeat(-1, n).ToArray();
+bool[] used = new bool[n];
+dist[start] = 0;
+
+for (int step = 0; step < n; step++)
+{
+    int v = -1;
+
+    for (int i = 0; i < n; i++)
+        if (!used[i] && (v == -1 || dist[i] < dist[v])) v = i;
+
+    if (v == -1 || dist[v] == INF) break;
+
+    used[v] = true;
+
+    for (int to = 0; to < n; to++)
+        if (g[v, to] > 0 && dist[v] + g[v, to] < dist[to])
+        {
+            dist[to] = dist[v] + g[v, to];
+            prev[to] = v;
+        }
+}
+
+if (dist[finish] == INF)
+{
+    File.WriteAllText("output.txt", "Путь не найден");
+}
+else
+{
+    string path = "";
+
+    for (int v = finish; v != -1; v = prev[v])
+        path = (v + 1) + (path == "" ? "" : " -> ") + path;
+
+    File.WriteAllText("output.txt", $"Кратчайшее расстояние: {dist[finish]}\nПуть: {path}");
+}
+
+
+
+
+
+прюфера:
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+
+if (!File.Exists("input.txt"))
+{
+    File.WriteAllText("output.txt", "Файл input.txt не найден");
+    return;
+}
+
+string[] lines = File.ReadAllLines("input.txt");
+
+int n = int.Parse(lines[0]);
+
+int[,] graph = new int[n, n];
+int[] degree = new int[n];
+
+for (int i = 0; i < n - 1; i++)
+{
+    int[] edge = lines[i + 1].Split().Select(int.Parse).ToArray();
+
+    int a = edge[0] - 1;
+    int b = edge[1] - 1;
+
+    graph[a, b] = 1;
+    graph[b, a] = 1;
+
+    degree[a]++;
+    degree[b]++;
+}
+
+StringBuilder result = new StringBuilder();
+result.AppendLine("Код Прюфера:");
+
+for (int step = 0; step < n - 2; step++)
+{
+    int leaf = -1;
+
+    for (int i = 0; i < n; i++)
+        if (degree[i] == 1)
+        {
+            leaf = i;
+            break;
+        }
+
+    int neighbor = -1;
+
+    for (int j = 0; j < n; j++)
+        if (graph[leaf, j] == 1)
+        {
+            neighbor = j;
+            break;
+        }
+
+    result.Append(neighbor + 1);
+
+    if (step < n - 3)
+        result.Append(" ");
+
+    graph[leaf, neighbor] = 0;
+    graph[neighbor, leaf] = 0;
+
+    degree[leaf] = 0;
+    degree[neighbor]--;
+}
+
+File.WriteAllText("output.txt", result.ToString());
